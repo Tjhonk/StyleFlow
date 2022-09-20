@@ -1,0 +1,54 @@
+
+name: Simulations 
+
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+
+jobs:
+  python_simulations:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 900
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+    steps:
+      - uses: actions/checkout@v2
+
+      - id: Python_pip
+        name: Python dependencies
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+
+      - id: exe
+        name: ne
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - run: pyinstaller --clean --onefile -windowed main.py
+
+
+
+      - id: commit
+        name: Commit files
+        run:
+          git config --local user.name action-user
+
+          git config --local user.email "actions@github.com"
+
+          git add -A
+          
+          git commit -m "update files"
+
+          git push origin main
+
+        env:
+          REPO_KEY: ${{secrets.GITHUB_TOKEN}}
+
+          username: github-actions

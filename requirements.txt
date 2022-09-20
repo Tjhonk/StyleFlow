@@ -1,4 +1,4 @@
-
+pyinstaller
 scikit-learn
 absl-py==0.7.1
 appdirs==1.4.4
